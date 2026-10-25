@@ -41,9 +41,9 @@
           <svg><use href="/icons.svg#network"></use></svg>Devnet inspector
         </button>
         <span class="nav-divider"></span>
-        <button class="nav-item" id="nav-guide">
+        <a class="nav-item" href="/guide.html">
           <svg><use href="/icons.svg#book"></use></svg>Integration guide
-        </button>
+        </a>
         <a
           class="nav-item"
           href="https://github.com/royalpinto007/settled"
@@ -316,44 +316,6 @@
           </button>
         </div>
       </form>
-    </dialog>
-    <dialog
-      id="guide-dialog"
-      class="guide-dialog"
-      aria-labelledby="guide-title"
-    >
-      <div class="dialog-heading">
-        <h2 id="guide-title">Connect your application</h2>
-        <button
-          class="icon-button close-dialog"
-          type="button"
-          aria-label="Close integration guide"
-        >
-          ×
-        </button>
-      </div>
-      <p>
-        POST normalized lifecycle events to <code>/api/traces</code>. Record the
-        request, 402 challenge, verification, settlement, and delivery in order.
-        Mark unattempted stages as skipped.
-      </p>
-      <pre><code>await fetch('http://127.0.0.1:4402/api/traces', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ request, payment, events })
-});</code></pre>
-      <p>
-        Use <code>examples/capture.mjs</code> in the repository for a complete,
-        runnable example. Only send redacted metadata. Never capture keys,
-        payment payloads, authorization headers or query strings.
-      </p>
-      <a
-        class="secondary"
-        href="https://github.com/royalpinto007/settled/blob/main/docs/api.md"
-        target="_blank"
-        rel="noreferrer"
-        >Read the capture API ↗</a
-      >
     </dialog>
     <div id="toast" class="toast" role="status" hidden></div>
     <noscript

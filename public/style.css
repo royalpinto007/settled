@@ -1082,12 +1082,6 @@ p.field-hint {
   line-height: 1.8;
   margin-top: 18px;
 }
-.guide-dialog {
-  width: min(94vw, 580px);
-}
-.guide-dialog pre {
-  margin-bottom: 20px;
-}
 code {
   font-family: var(--mono);
   font-size: 0.9em;

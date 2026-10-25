@@ -519,7 +519,6 @@ $("nav-devnet").onclick = () => {
   $("devnet-error").textContent = "";
   openDialog("devnet-dialog");
 };
-$("nav-guide").onclick = () => openDialog("guide-dialog");
 for (const button of document.querySelectorAll<HTMLButtonElement>(
   ".close-dialog",
 ))

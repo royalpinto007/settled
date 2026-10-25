@@ -45,7 +45,7 @@ node examples/capture.mjs
 node examples/capture.mjs delivery_failed
 ```
 
-The example makes an actual HTTP 402 challenge and retry against an ephemeral local fixture resource. It records measured stage timings and sends the completed trace to the debugger. Its payment verifier and settlement are explicitly local fixtures, not a conforming x402 payment implementation. For a real integration, emit events around your x402 SDK and resource handler. See the [capture API](docs/api.md).
+The example makes an actual HTTP 402 challenge and retry against an ephemeral local fixture resource. It records measured stage timings and sends the completed trace to the debugger. Its payment verifier and settlement are explicitly local fixtures, not a conforming x402 payment implementation. For a real integration, emit events around your x402 SDK and resource handler. Open **Integration guide** in the dashboard for the full local API reference at `/guide.html`, or read the [capture API](docs/api.md) in the repository. The local page is generated from that document at build time and works offline.
 
 ## Devnet inspector
 

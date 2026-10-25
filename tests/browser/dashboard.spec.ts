@@ -106,11 +106,28 @@ test("captured metadata is displayed as text and invalid Devnet signatures stay 
   await expect(page.locator("#devnet-error")).toContainText("signature");
   await page.getByLabel("Close Devnet inspector").click();
   await page
-    .getByRole("button", { name: "Integration guide", exact: true })
+    .getByRole("link", { name: "Integration guide", exact: true })
     .click();
+  await expect(page).toHaveURL("/guide.html");
   await expect(
-    page.getByRole("heading", { name: "Connect your application" }),
+    page.getByRole("heading", { name: "Local API", exact: true }),
   ).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByRole("table").first()).toContainText("/api/traces");
+  await page.getByRole("link", { name: "Capture", exact: true }).click();
+  await expect(page).toHaveURL("/guide.html#capture");
+  await expect(page.locator("#capture + pre")).toContainText('"events"');
+  await page.reload();
+  await expect(page.locator("#capture")).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page
+    .getByRole("link", { name: "Back to requests", exact: true })
+    .click();
+  await expect(page).toHaveURL("/");
+  await expect(
+    page.getByRole("heading", { name: "Did the payment settle?" }),
+  ).toBeVisible();
 });
