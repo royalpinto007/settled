@@ -1,0 +1,27 @@
+name: Product feedback
+description: Tell us what worked, what was confusing, or what is missing.
+labels: [feedback]
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: What were you trying to do?
+      description: Include the scenario or integration you tested.
+    validations:
+      required: true
+  - type: textarea
+    id: experience
+    attributes:
+      label: What worked or got in your way?
+      description: Screenshots and redacted examples help. Never include keys, environment files or signed payment payloads.
+    validations:
+      required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: What would make it better?
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser and Node.js version, if relevant.

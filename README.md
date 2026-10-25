@@ -1,11 +1,11 @@
 # Settled?
 
-A free, local-first x402 payment debugger for Solana. Find out whether a payment settled and why delivery failed.
+**A free, local-first x402 payment debugger for Solana. Find out whether a payment settled and why delivery failed.**
+
+![Settled? request explorer showing a paid request with failed delivery](docs/screenshot.png)
 
 [![CI](https://github.com/royalpinto007/settled/actions/workflows/ci.yml/badge.svg)](https://github.com/royalpinto007/settled/actions/workflows/ci.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-b7a3ff)](LICENSE)
-
-![Settled? request explorer](docs/screenshot.png)
 
 ## Run
 
@@ -45,3 +45,7 @@ npm run test:e2e
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MIT](LICENSE). Not published to npm.
+
+## Feedback
+
+[Share what worked or got in your way](https://github.com/royalpinto007/settled/issues/new?template=feedback.yml). See [feedback status](docs/feedback.md) and [demo capture instructions](docs/demo.md).
