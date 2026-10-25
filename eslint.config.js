@@ -14,7 +14,16 @@ export default ts.config(
   ...ts.configs.recommended,
   {
     files: ["**/*.mjs"],
-    languageOptions: { globals: { process: "readonly", console: "readonly" } },
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        performance: "readonly",
+        URL: "readonly",
+        fetch: "readonly",
+        AbortSignal: "readonly",
+      },
+    },
   },
   {
     rules: {
