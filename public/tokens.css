@@ -1,0 +1,16 @@
+:root {
+  --canvas: #101218;
+  --sidebar: #151820;
+  --panel: #191c25;
+  --border: #303542;
+  --text: #edf0f7;
+  --muted: #929cb0;
+  --accent: #b7a3ff;
+  --green: #79d6b0;
+  --red: #ef91a8;
+  --amber: #e8c47e;
+  --sans:
+    "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}

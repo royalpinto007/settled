@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#101218" />
+    <meta
+      name="description"
+      content="A local-first x402 payment debugger for Solana. Trace payments, find delivery failures, and test without funds."
+    />
+    <title>Settled? | Local x402 debugger</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to requests</a>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Settled? home"
+        ><span class="brand-mark">S<span>?</span></span
+        ><span>settled<span class="brand-question">?</span></span></a
+      >
+      <div class="workspace">
+        <span class="workspace-icon">⌘</span>
+        <div>Local workspace<small>Personal session</small></div>
+        <span class="local-dot"></span>
+      </div>
+      <nav aria-label="Main navigation">
+        <a class="nav-item active" href="#main"
+          ><svg><use href="/icons.svg#requests"></use></svg>Requests<span
+            id="nav-count"
+            class="nav-count"
+            >0</span
+          ></a
+        >
+        <button class="nav-item" id="nav-simulate">
+          <svg><use href="/icons.svg#play"></use></svg>Simulator
+        </button>
+        <button class="nav-item" id="nav-devnet">
+          <svg><use href="/icons.svg#network"></use></svg>Devnet inspector
+        </button>
+        <span class="nav-divider"></span>
+        <button class="nav-item" id="nav-guide">
+          <svg><use href="/icons.svg#book"></use></svg>Integration guide
+        </button>
+        <a
+          class="nav-item"
+          href="https://github.com/royalpinto007/settled"
+          target="_blank"
+          rel="noreferrer"
+          ><svg><use href="/icons.svg#github"></use></svg>Source code<small
+            >↗</small
+          ></a
+        >
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="privacy-icon">
+          <svg><use href="/icons.svg#shield"></use></svg>
+        </div>
+        <strong>Your traces stay here.</strong>
+        <p>Stored on your machine.<br />No accounts. No telemetry.</p>
+        <span class="version">v0.1.0 <span>MIT licensed</span></span>
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <span
+          ><span class="muted">Workspace</span
+          ><span class="slash">/</span>Request explorer</span
+        ><span class="connection" id="connection"
+          ><span class="local-dot"></span>Local session
+          <kbd>127.0.0.1</kbd></span
+        >
+      </header>
+      <main id="main" tabindex="-1">
+        <section class="page-heading">
+          <div>
+            <div class="heading-meta">
+              <svg class="solana"><use href="/icons.svg#solana"></use></svg
+              >Solana <span class="protocol-tag">x402 debugger</span>
+            </div>
+            <h1>Did the payment settle?</h1>
+            <p>
+              Follow every request from payment required to resource delivered.
+            </p>
+          </div>
+          <button class="primary" id="new-simulation">
+            <svg><use href="/icons.svg#plus"></use></svg>New simulation
+          </button>
+        </section>
+        <div class="session-banner">
+          <span class="banner-symbol">◇</span>
+          <p>
+            <strong>A sandbox for the whole payment lifecycle.</strong> Simulate
+            failures without a wallet or real funds.
+          </p>
+          <button id="banner-run">Run a scenario <span>↗</span></button>
+        </div>
+        <section class="stats" aria-label="Session statistics">
+          <div>
+            <span>Total requests</span><strong id="stat-total">0</strong
+            ><small>In this workspace</small>
+          </div>
+          <div>
+            <span><i class="dot good"></i>Delivered</span
+            ><strong id="stat-delivered">0</strong
+            ><small>Payment and resource received</small>
+          </div>
+          <div>
+            <span><i class="dot bad"></i>Needs attention</span
+            ><strong id="stat-issues">0</strong
+            ><small>Failed or timed out</small>
+          </div>
+          <div>
+            <span><i class="dot warn"></i>Settled, not delivered</span
+            ><strong id="stat-undelivered">0</strong
+            ><small>Inspect before paying again</small>
+          </div>
+        </section>
+        <div id="error-banner" class="error-banner" role="alert" hidden></div>
+        <section class="explorer" aria-label="Request explorer">
+          <div class="explorer-heading">
+            <div>
+              <h2>Requests</h2>
+              <span id="result-count" class="count-chip">0</span>
+            </div>
+            <div>
+              <span class="refresh-label"
+                ><span class="local-dot"></span>Auto-refresh</span
+              ><a class="text-button" href="/api/export" download
+                ><svg><use href="/icons.svg#download"></use></svg>Export all</a
+              >
+            </div>
+          </div>
+          <div class="toolbar">
+            <label class="search"
+              ><svg><use href="/icons.svg#search"></use></svg
+              ><input
+                id="search"
+                type="search"
+                aria-label="Search requests"
+                placeholder="Search path, request ID, or signature…"
+                autocomplete="off"
+              /><kbd>/</kbd></label
+            ><select id="outcome-filter" aria-label="Filter by outcome">
+              <option value="all">All outcomes</option>
+              <option value="delivered">Delivered</option>
+              <option value="delivery_failed">Delivery failed</option>
+              <option value="payment_failed">Payment failed</option>
+              <option value="timeout">Timed out</option>
+              <option value="error">Server error</option>
+              <option value="observed">Observed</option></select
+            ><select id="source-filter" aria-label="Filter by source">
+              <option value="all">All sources</option>
+              <option value="simulation">Simulation</option>
+              <option value="capture">Captured</option>
+              <option value="devnet">Devnet</option>
+            </select>
+          </div>
+          <div class="explorer-body">
+            <section class="request-list" aria-label="Requests">
+              <div class="list-header">
+                <span>Request / resource</span><span>Outcome</span
+                ><span>Duration</span>
+              </div>
+              <div id="request-rows"></div>
+              <div id="empty-state" class="empty" hidden>
+                <svg><use href="/icons.svg#requests"></use></svg>
+                <h3>No requests found</h3>
+                <p>Try another filter or run your first simulation.</p>
+                <button class="secondary" id="empty-run">
+                  Run a simulation
+                </button>
+              </div>
+              <button id="load-more" class="load-more" hidden>
+                Load more requests
+              </button>
+              <div class="list-footer">
+                <span id="list-summary">Loading local traces…</span
+                ><span>JSON storage</span>
+              </div>
+            </section>
+            <section
+              class="inspector"
+              id="inspector"
+              aria-label="Trace inspector"
+            >
+              <div class="empty">
+                <h3>Select a request</h3>
+                <p>
+                  Its timeline, payment details and diagnostics will appear
+                  here.
+                </p>
+              </div>
+            </section>
+          </div>
+        </section>
+        <footer class="page-footer">
+          <span
+            ><svg><use href="/icons.svg#lock"></use></svg>Local-first. Open
+            source. Always free.</span
+          ><span>Built for the moments between 402 and 200.</span>
+        </footer>
+      </main>
+    </div>
+    <dialog id="simulation-dialog" aria-labelledby="simulation-title">
+      <form id="simulation-form">
+        <div class="dialog-heading">
+          <div>
+            <span class="dialog-icon">▷</span>
+            <h2 id="simulation-title">Run a simulation</h2>
+          </div>
+          <button
+            class="icon-button close-dialog"
+            type="button"
+            aria-label="Close simulation"
+          >
+            ×
+          </button>
+        </div>
+        <p>
+          Exercise the x402 lifecycle with fixture payments. No wallet, network
+          calls or real funds.
+        </p>
+        <label
+          >Scenario<select id="scenario" name="scenario" aria-label="Scenario">
+            <option value="success">Successful payment</option>
+            <option value="delivery_failed">Paid, delivery failed</option>
+            <option value="verification_failed">Verification rejected</option>
+            <option value="settlement_failed">Settlement failed</option>
+            <option value="timeout">Settlement timeout</option>
+            <option value="server_error">Server error</option>
+          </select></label
+        >
+        <p id="scenario-description" class="field-hint">
+          All five stages complete and the resource is delivered.
+        </p>
+        <div class="form-grid">
+          <label
+            >Method<select id="method" name="method" aria-label="Method">
+              <option>GET</option>
+              <option>POST</option>
+              <option>PUT</option>
+              <option>PATCH</option>
+              <option>DELETE</option>
+            </select></label
+          ><label
+            >Resource path<input
+              name="path"
+              id="resource-path"
+              value="/api/weather"
+              required
+              maxlength="200"
+              pattern="/[^?\s]*"
+          /></label>
+        </div>
+        <label
+          >Amount in base units<input
+            name="amount"
+            id="amount"
+            value="10000"
+            required
+            inputmode="numeric"
+            pattern="[0-9]{1,20}"
+            maxlength="20" /></label
+        ><span class="field-hint"
+          >Fixture USDC uses 6 decimals. 10,000 base units = 0.01 USDC.</span
+        >
+        <div class="form-error" id="simulation-error" role="alert"></div>
+        <div class="dialog-actions">
+          <button class="secondary close-dialog" type="button">Cancel</button
+          ><button class="primary" id="run-simulation" type="submit">
+            Run simulation
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="devnet-dialog" aria-labelledby="devnet-title">
+      <form id="devnet-form">
+        <div class="dialog-heading">
+          <h2 id="devnet-title">Inspect a Devnet transaction</h2>
+          <button
+            class="icon-button close-dialog"
+            type="button"
+            aria-label="Close Devnet inspector"
+          >
+            ×
+          </button>
+        </div>
+        <p>
+          Check an existing signature using Solana's public Devnet RPC. Read
+          only. No wallet required.
+        </p>
+        <label
+          >Transaction signature<textarea
+            id="signature"
+            name="signature"
+            required
+            minlength="64"
+            maxlength="88"
+            rows="3"
+            placeholder="Paste a base58 Devnet signature"
+          ></textarea>
+        </label>
+        <div class="notice">
+          A confirmed transaction does not prove the x402 recipient, mint,
+          amount or resource delivery. This inspector reports chain execution
+          only.
+        </div>
+        <div class="form-error" id="devnet-error" role="alert"></div>
+        <div class="dialog-actions">
+          <button class="secondary close-dialog" type="button">Cancel</button
+          ><button class="primary" id="check-devnet" type="submit">
+            Check Devnet
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog
+      id="guide-dialog"
+      class="guide-dialog"
+      aria-labelledby="guide-title"
+    >
+      <div class="dialog-heading">
+        <h2 id="guide-title">Connect your application</h2>
+        <button
+          class="icon-button close-dialog"
+          type="button"
+          aria-label="Close integration guide"
+        >
+          ×
+        </button>
+      </div>
+      <p>
+        POST normalized lifecycle events to <code>/api/traces</code>. Record the
+        request, 402 challenge, verification, settlement, and delivery in order.
+        Mark unattempted stages as skipped.
+      </p>
+      <pre><code>await fetch('http://127.0.0.1:4402/api/traces', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ request, payment, events })
+});</code></pre>
+      <p>
+        Use <code>examples/capture.mjs</code> in the repository for a complete,
+        runnable example. Only send redacted metadata. Never capture keys,
+        payment payloads, authorization headers or query strings.
+      </p>
+      <a
+        class="secondary"
+        href="https://github.com/royalpinto007/settled/blob/main/docs/api.md"
+        target="_blank"
+        rel="noreferrer"
+        >Read the capture API ↗</a
+      >
+    </dialog>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <noscript
+      ><p class="error-banner">
+        Enable JavaScript to use the dashboard. The local JSON API is also
+        available at /api/traces.
+      </p></noscript
+    >
+  </body>
+</html>

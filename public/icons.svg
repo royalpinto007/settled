@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+<symbol id="requests" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h4"/></symbol>
+<symbol id="play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z"/><path d="M4 5v14"/></symbol>
+<symbol id="network" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="18" r="3"/><circle cx="19" cy="18" r="3"/><path d="m10 8-4 7m8-7 4 7M8 18h8"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M12 5c-4-3-8-2-10-1v15c3-1 6-1 10 1 4-2 7-2 10-1V4c-2-1-6-2-10 1Zm0 0v15"/></symbol>
+<symbol id="github" viewBox="0 0 24 24"><path d="M9 19c-5 1-5-3-7-3m14 6v-4c0-1-.4-2-1-2 4-.5 6-2 6-6 0-2-.6-3-1.5-4 .2-1 .2-2-.5-3-2 0-3 1-4 1a15 15 0 0 0-6 0C8 4 7 3 5 3c-.7 1-.7 2-.5 3C3.6 7 3 8 3 10c0 4 2 5.5 6 6-.6.5-1 1-1 2v4"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6Z"/><path d="m8 12 3 3 5-6"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v2"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="m15 15 6 6"/></symbol>
+<symbol id="download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol>
+<symbol id="solana" viewBox="0 0 24 24"><path d="M6 3h16l-4 4H2Zm-4 7h16l4 4H6Zm4 7h16l-4 4H2Z" fill="currentColor" stroke="none"/></symbol>
+</svg>
