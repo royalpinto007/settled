@@ -12,3 +12,5 @@ test-results/
 *.log
 *.tgz
 .npmrc
+*.mp4
+*.webm

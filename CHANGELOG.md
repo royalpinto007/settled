@@ -8,5 +8,3 @@
 - Styled controls and responsive dashboard.
 - Offline API, architecture and setup pages with diagrams.
 - Installable CLI and checked npm tarball; publication pending approval.
-- Reproducible 28-second GSAP demo at 60 fps and product feedback tracking.
-- Live dashboard rendering and automatic demo framing checks.

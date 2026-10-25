@@ -48,4 +48,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MIT](LICENSE). Not publi
 
 ## Feedback
 
-[Share what worked or got in your way](https://github.com/royalpinto007/settled/issues/new?template=feedback.yml). See [feedback status](docs/feedback.md) and [demo capture instructions](docs/demo.md).
+[Share what worked or got in your way](https://github.com/royalpinto007/settled/issues/new?template=feedback.yml).

@@ -24,7 +24,3 @@ jobs:
         run: npx playwright install --with-deps chromium
       - if: matrix.node == 24
         run: npm run test:e2e
-      - if: matrix.node == 24
-        run: sudo apt-get install -y fonts-lato
-      - if: matrix.node == 24
-        run: npm run demo:check
