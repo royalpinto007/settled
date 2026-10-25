@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="255" viewBox="0 0 960 255" role="img" aria-labelledby="title desc">
+  <title id="title">Payment request lifecycle</title>
+  <desc id="desc">Request, payment required, verification, settlement, then delivery. A settled payment can still fail to deliver the resource. Failed stages stop later stages.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="m0 0 8 4-8 4" fill="#b7a3ff"/></marker></defs>
+  <rect width="960" height="255" rx="16" fill="#101218"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="25" y="40" fill="#edf0f7" font-size="20" font-weight="600">Follow the request</text>
+    <g fill="#1f2330" stroke="#41495e">
+      <rect x="25" y="80" width="158" height="86" rx="10"/>
+      <rect x="213" y="80" width="158" height="86" rx="10"/>
+      <rect x="401" y="80" width="158" height="86" rx="10"/>
+      <rect x="589" y="80" width="158" height="86" rx="10"/>
+      <rect x="777" y="80" width="158" height="86" rx="10" stroke="#ef91a8"/>
+    </g>
+    <g fill="none" stroke="#b7a3ff" stroke-width="2" marker-end="url(#arrow)"><path d="M183 123h30"/><path d="M371 123h30"/><path d="M559 123h30"/><path d="M747 123h30"/></g>
+    <g text-anchor="middle" fill="#edf0f7" font-size="16" font-weight="600">
+      <text x="104" y="115">Request</text><text x="292" y="115">402 challenge</text><text x="480" y="115">Verify</text><text x="668" y="115">Settle</text><text x="856" y="115">Deliver</text>
+    </g>
+    <g text-anchor="middle" fill="#aeb8cc" font-size="12"><text x="104" y="143">Receive API call</text><text x="292" y="143">Ask for payment</text><text x="480" y="143">Check the payload</text><text x="668" y="143">Confirm payment</text><text x="856" y="143">200 or an error</text></g>
+    <text x="25" y="215" fill="#efb1c0" font-size="14">Payment success and delivery success are separate outcomes.</text>
+  </g>
+</svg>

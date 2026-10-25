@@ -1,0 +1,176 @@
+/* Keep native form semantics, keyboard behavior and mobile fallbacks. */
+select {
+  appearance: none;
+  color: var(--text);
+  min-height: 42px;
+  border-radius: 8px;
+  padding: 10px 36px 10px 13px;
+  background-color: #202430;
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b8c0d3' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+  background-image: var(--select-chevron);
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  box-shadow: 0 1px 2px #0002;
+}
+select:hover {
+  background-color: #282d3b;
+  border-color: #535c71;
+}
+select:focus-visible {
+  border-color: var(--accent);
+  outline-offset: 2px;
+}
+select option {
+  background: #202430;
+  color: var(--text);
+}
+.toolbar select {
+  min-inline-size: 9rem;
+  font-size: 12px;
+  gap: 10px;
+}
+#method {
+  gap: 8px;
+}
+dialog select,
+dialog input,
+dialog textarea {
+  min-height: 44px;
+  border-radius: 8px;
+}
+.search {
+  border-radius: 8px;
+}
+.search input {
+  min-height: 42px;
+  font-size: 12px;
+}
+.primary,
+.secondary {
+  min-height: 42px;
+  border-radius: 8px;
+}
+.primary:active,
+.secondary:active {
+  transform: translateY(1px);
+}
+.icon-button {
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 6px;
+}
+.icon-button:hover {
+  background: #2b3040;
+  color: var(--text);
+}
+.event-detail,
+.diagnostic p {
+  font-size: 11px;
+}
+.event-title,
+.diagnostic h3 {
+  font-size: 12px;
+}
+.evidence-label {
+  font-size: 10px;
+}
+.request-title {
+  font-size: 12px;
+}
+.badge {
+  font-size: 10px;
+}
+.request-meta {
+  font-size: 10px;
+}
+.source-tag {
+  font-size: 9px;
+}
+.page-footer a:hover {
+  color: var(--accent);
+}
+
+@supports (appearance: base-select) {
+  select,
+  select::picker(select) {
+    appearance: base-select;
+  }
+  select {
+    background-image: none;
+    padding-right: 12px;
+    gap: 18px;
+    align-items: center;
+  }
+  select::picker-icon {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background-image: var(--select-chevron);
+    background-repeat: no-repeat;
+    background-position: center;
+    color: #aeb8cc;
+    font-size: 12px;
+    transition: rotate 150ms;
+  }
+  select:open {
+    border-color: var(--accent);
+    background-color: #282635;
+  }
+  select:open::picker-icon {
+    rotate: 180deg;
+  }
+  select::picker(select) {
+    margin-block: 6px;
+    background: #202430;
+    color: var(--text);
+    border: 1px solid #485167;
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow:
+      0 16px 40px #0008,
+      0 2px 6px #0005;
+    max-height: min(360px, 60vh);
+    overflow: auto;
+  }
+  select option {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 12px;
+    min-height: 40px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    outline: 1px solid transparent;
+    outline-offset: -2px;
+  }
+  select option:hover,
+  select option:focus {
+    background: #353248;
+  }
+  select option:checked {
+    background: #363048;
+    color: #e1d7ff;
+    font-weight: 600;
+  }
+  select option:focus-visible {
+    outline-color: var(--accent);
+  }
+  select option::checkmark {
+    order: 1;
+    margin-inline-start: auto;
+    color: var(--accent);
+  }
+}
+@media (max-width: 760px) {
+  .toolbar select {
+    min-inline-size: 0;
+    font-size: 11px;
+  }
+  .request-title {
+    font-size: 11px;
+  }
+  .request-meta {
+    font-size: 9px;
+  }
+}

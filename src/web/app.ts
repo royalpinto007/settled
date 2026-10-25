@@ -288,8 +288,8 @@ function renderTimeline(trace: Entry): HTMLElement {
       "p",
       "evidence-label",
       trace.source === "simulation"
-        ? "Sandbox evidence only. Timings, verification and settlement are simulated. No funds were moved."
-        : "Captured evidence is reported by your application. Settled? does not independently verify payment payloads.",
+        ? "Simulated events and timings. No funds moved."
+        : "Reported by your app. Payment payloads are not independently verified.",
     ),
   );
   return body;
@@ -333,7 +333,7 @@ function renderTransaction(trace: Entry): HTMLElement {
       el(
         "p",
         "evidence-label",
-        "Fixture signatures are not Solana transactions and cannot be opened in an explorer.",
+        "Fixture signature. No on-chain transaction exists.",
       ),
     );
   return body;
@@ -524,16 +524,12 @@ for (const button of document.querySelectorAll<HTMLButtonElement>(
 ))
   button.onclick = () => button.closest("dialog")?.close();
 const descriptions: Record<string, string> = {
-  success: "All five stages complete and the resource is delivered.",
-  delivery_failed:
-    "Payment settles, then the resource handler returns HTTP 500.",
-  verification_failed:
-    "The verifier rejects the fixture signature. Nothing is settled.",
-  settlement_failed:
-    "Verification passes, but the simulated network rejects settlement.",
-  timeout:
-    "Settlement exceeds a simulated 5-second deadline. The payment outcome is unknown.",
-  server_error: "The API returns HTTP 503 before a payment is attempted.",
+  success: "All five stages pass.",
+  delivery_failed: "Payment settles. Delivery returns HTTP 500.",
+  verification_failed: "Signature rejected. No settlement.",
+  settlement_failed: "Verification passes. Settlement fails.",
+  timeout: "No confirmation after 5 simulated seconds. Outcome unknown.",
+  server_error: "HTTP 503 before payment.",
 };
 $<HTMLSelectElement>("scenario").onchange = () => {
   $("scenario-description").textContent =

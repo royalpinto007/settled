@@ -1,6 +1,57 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
+test("dropdowns support pointer and keyboard selection", async ({ page }) => {
+  await page.goto("/");
+  const outcome = page.getByLabel("Filter by outcome");
+  await outcome.click();
+  await expect(
+    page.getByRole("option", { name: "Delivered", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("option", { name: "Delivered", exact: true }).click();
+  await expect(outcome).toHaveValue("delivered");
+  await expect(page.locator(".request-row").first()).toContainText("Delivered");
+  const source = page.getByLabel("Filter by source");
+  await source.focus();
+  await page.keyboard.press("Space");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(source).toHaveValue("simulation");
+  await outcome.click();
+  await page.keyboard.press("Escape");
+  await expect(outcome).toBeFocused();
+});
+
+test("architecture diagrams are available inside the app", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Architecture", exact: true }).click();
+  await expect(page).toHaveURL("/architecture.html");
+  await expect(
+    page.getByRole("heading", { name: "Architecture", exact: true }),
+  ).toBeVisible();
+  for (const name of [
+    "Settled? system architecture",
+    "Payment request lifecycle",
+  ]) {
+    const diagram = page.getByRole("img", { name, exact: true });
+    await expect(diagram).toBeVisible();
+    expect(
+      await diagram.evaluate(
+        (image) => (image as HTMLImageElement).naturalWidth,
+      ),
+    ).toBeGreaterThan(0);
+  }
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page
+    .getByRole("link", { name: "Integration guide", exact: true })
+    .click();
+  await expect(page).toHaveURL("/guide.html");
+});
+
 test("inspect a paid delivery failure, switch views with the keyboard, and export evidence", async ({
   page,
 }, info) => {

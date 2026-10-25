@@ -1,6 +1,6 @@
 # Local API
 
-Base URL: `http://127.0.0.1:4402`. POST requests require `Content-Type: application/json`. All data is local. Browser callers must share the dashboard origin; server-side clients may call loopback directly.
+Base URL: `http://127.0.0.1:4402`. Send JSON with `Content-Type: application/json`. Browser callers must use the dashboard origin.
 
 | Method | Path                     | Behavior                                                       |
 | ------ | ------------------------ | -------------------------------------------------------------- |
@@ -77,11 +77,16 @@ Only `scenario` is required. Other fields default to the values above. Scenarios
 }
 ```
 
-Supply exactly five events, in this order. Status is `success`, `failure`, `timeout` or `skipped`. After any failure, timeout or skipped stage, all later stages must be skipped. Offsets must not overlap and the timeline must fit within 24 hours. Use `durationMs: 0` for unattempted stages. The server derives the outcome and returns the stored trace with `source: "capture"` and diagnostics.
+Capture rules:
 
-An optional top-level `signature` is a base58 Solana signature, stored as unverified (`state: "unknown"`). No RPC call occurs during capture. Use the Devnet endpoint to make an independent chain observation. Only Devnet CAIP-2 is accepted in this MVP. Methods: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
+- Send all five stages in order. After `failure`, `timeout` or `skipped`, skip every later stage.
+- Use non-overlapping millisecond offsets, within 24 hours. Skipped stages take zero milliseconds.
+- Use integer base-unit strings for amounts and Devnet CAIP-2 for the network.
+- Paths must exclude query strings and whitespace. Use templates like `/api/orders/{id}` for private identifiers.
+- Event details are limited to 500 characters. Redact secrets first; unknown fields are rejected.
+- An optional `signature` is stored as unverified. Capture never calls the blockchain.
 
-Paths must be root-relative route paths without query strings, whitespace or credentials. Use route templates such as `/api/orders/{id}` for sensitive identifiers. Amount is a string of 1 to 20 decimal digits in token base units, not a floating-point currency value. `asset` is a mint address or explicit fixture label; it is metadata, not an allowlist or payment validation result. Details are limited to 500 characters. Unknown keys are rejected. Never include raw headers, bodies, secrets or signed payloads. The debugger cannot automatically redact secrets you place in event details.
+The response includes the derived outcome, diagnostics and `source: "capture"`.
 
 ## List and export
 
@@ -106,7 +111,16 @@ curl http://127.0.0.1:4402/api/devnet \
   -d '{"signature":"PASTE_AN_EXISTING_DEVNET_SIGNATURE"}'
 ```
 
-The fixed public endpoint calls `getTransaction` with `commitment: "confirmed"`, `encoding: "jsonParsed"`, `maxSupportedTransactionVersion: 1`. This supports legacy, v0 and v1 transaction observations, following [Solana's versioned transaction guidance](https://solana.com/developers/cookbook/transactions/versions). A matching result with `meta.err: null` produces `confirmed`; a transaction error produces `failed`; a null result produces `not_found`; missing metadata produces `unknown`. Responses are size-limited and checked against a schema. Unsupported transaction versions, malformed responses and RPC outages produce an error. A timeout is never interpreted as payment failure.
+This reads `getTransaction` at confirmed commitment, with parsed JSON and support for legacy, v0 and v1 transactions.
+
+| State       | Meaning                                                              |
+| ----------- | -------------------------------------------------------------------- |
+| `confirmed` | Transaction executed without an on-chain error                       |
+| `failed`    | Transaction has an on-chain error                                    |
+| `not_found` | No confirmed result; it may be pending, pruned or on another cluster |
+| `unknown`   | Transaction metadata is missing                                      |
+
+This checks chain execution, not x402 recipient, mint, amount, authorization or delivery. RPC errors never count as confirmation. Limit: one check at a time, up to 12 per minute.
 
 ## Errors
 

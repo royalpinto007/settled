@@ -12,6 +12,7 @@
     <title>Settled? | Local x402 debugger</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/controls.css" />
     <script type="module" src="/app.js"></script>
   </head>
   <body>
@@ -43,6 +44,9 @@
         <span class="nav-divider"></span>
         <a class="nav-item" href="/guide.html">
           <svg><use href="/icons.svg#book"></use></svg>Integration guide
+        </a>
+        <a class="nav-item" href="/architecture.html">
+          <svg><use href="/icons.svg#architecture"></use></svg>Architecture
         </a>
         <a
           class="nav-item"
@@ -81,9 +85,7 @@
               >Solana <span class="protocol-tag">x402 debugger</span>
             </div>
             <h1>Did the payment settle?</h1>
-            <p>
-              Follow every request from payment required to resource delivered.
-            </p>
+            <p>Trace payments and spot delivery failures.</p>
           </div>
           <button class="primary" id="new-simulation">
             <svg><use href="/icons.svg#plus"></use></svg>New simulation
@@ -92,8 +94,8 @@
         <div class="session-banner">
           <span class="banner-symbol">◇</span>
           <p>
-            <strong>A sandbox for the whole payment lifecycle.</strong> Simulate
-            failures without a wallet or real funds.
+            <strong>Test without funds.</strong> Six scenarios. No wallet
+            needed.
           </p>
           <button id="banner-run">Run a scenario <span>↗</span></button>
         </div>
@@ -200,7 +202,7 @@
           <span
             ><svg><use href="/icons.svg#lock"></use></svg>Local-first. Open
             source. Always free.</span
-          ><span>Built for the moments between 402 and 200.</span>
+          ><a href="/architecture.html">How it works</a>
         </footer>
       </main>
     </div>
@@ -219,10 +221,7 @@
             ×
           </button>
         </div>
-        <p>
-          Exercise the x402 lifecycle with fixture payments. No wallet, network
-          calls or real funds.
-        </p>
+        <p>Choose a scenario. No funds move.</p>
         <label
           >Scenario<select id="scenario" name="scenario" aria-label="Scenario">
             <option value="success">Successful payment</option>
@@ -234,7 +233,7 @@
           </select></label
         >
         <p id="scenario-description" class="field-hint">
-          All five stages complete and the resource is delivered.
+          All five stages pass.
         </p>
         <div class="form-grid">
           <label
@@ -264,9 +263,7 @@
             inputmode="numeric"
             pattern="[0-9]{1,20}"
             maxlength="20" /></label
-        ><span class="field-hint"
-          >Fixture USDC uses 6 decimals. 10,000 base units = 0.01 USDC.</span
-        >
+        ><span class="field-hint">10,000 base units = 0.01 fixture USDC.</span>
         <div class="form-error" id="simulation-error" role="alert"></div>
         <div class="dialog-actions">
           <button class="secondary close-dialog" type="button">Cancel</button
@@ -288,10 +285,7 @@
             ×
           </button>
         </div>
-        <p>
-          Check an existing signature using Solana's public Devnet RPC. Read
-          only. No wallet required.
-        </p>
+        <p>Look up an existing Devnet signature. Read only.</p>
         <label
           >Transaction signature<textarea
             id="signature"
@@ -304,9 +298,8 @@
           ></textarea>
         </label>
         <div class="notice">
-          A confirmed transaction does not prove the x402 recipient, mint,
-          amount or resource delivery. This inspector reports chain execution
-          only.
+          Confirms chain execution, not the x402 recipient, mint, amount or
+          delivery.
         </div>
         <div class="form-error" id="devnet-error" role="alert"></div>
         <div class="dialog-actions">

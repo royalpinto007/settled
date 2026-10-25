@@ -59,6 +59,32 @@
   background: #29243c;
   color: var(--accent);
 }
+.docs-navigation .docs-page-link[aria-current="page"] {
+  background: #29243c;
+  color: #d5c7ff;
+}
+.docs-navigation .docs-toc-label {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.docs-content img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 24px 0;
+}
+.docs-content p:has(img) {
+  max-width: none;
+}
+.docs-content .diagram-link {
+  display: block;
+}
+.diagram-link:hover img {
+  border-color: var(--accent);
+}
 .docs-local {
   display: flex;
   align-items: center;

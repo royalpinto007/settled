@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="570" viewBox="0 0 960 570" role="img" aria-labelledby="title desc">
+  <title id="title">Settled? system architecture</title>
+  <desc id="desc">The dashboard and your application send requests to a local Express API. The trace engine simulates or captures events and saves them to JSON files. An optional read-only connection checks Solana Devnet.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="m0 0 8 4-8 4" fill="#b7a3ff"/></marker></defs>
+  <rect width="960" height="570" rx="16" fill="#101218"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="34" y="38" fill="#edf0f7" font-size="20" font-weight="600">One app. Local files.</text>
+    <rect x="28" y="68" width="650" height="480" rx="14" fill="#151820" stroke="#42495b" stroke-dasharray="6 6"/>
+    <text x="50" y="103" fill="#aeb8cc" font-size="13">Your machine</text>
+    <g fill="none" stroke="#b7a3ff" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M290 181h100"/>
+      <path d="M290 326h50V200h50"/>
+      <path d="M505 217v73"/>
+      <path d="M505 362v73"/>
+      <path d="M620 181h115" stroke-dasharray="5 5"/>
+    </g>
+    <g fill="#1f2330" stroke="#41495e">
+      <rect x="60" y="145" width="230" height="72" rx="10"/>
+      <rect x="60" y="290" width="230" height="72" rx="10"/>
+      <rect x="390" y="145" width="230" height="72" rx="10" stroke="#b7a3ff"/>
+      <rect x="390" y="290" width="230" height="72" rx="10"/>
+      <rect x="390" y="435" width="230" height="72" rx="10"/>
+      <rect x="735" y="145" width="195" height="100" rx="10"/>
+    </g>
+    <g fill="#edf0f7" font-size="16" font-weight="600" text-anchor="middle">
+      <text x="175" y="175">Dashboard</text>
+      <text x="175" y="320">Your application</text>
+      <text x="505" y="175">Express API</text>
+      <text x="505" y="320">Trace engine</text>
+      <text x="505" y="465">JSON files</text>
+      <text x="832" y="180">Solana Devnet</text>
+    </g>
+    <g fill="#aeb8cc" font-size="12" text-anchor="middle">
+      <text x="175" y="196">Inspect, simulate, export</text>
+      <text x="175" y="341">Redacted lifecycle events</text>
+      <text x="505" y="196">Loopback only</text>
+      <text x="505" y="341">Simulate, capture, diagnose</text>
+      <text x="505" y="486">Serialized, atomic writes</text>
+      <text x="832" y="204">Public RPC</text>
+      <text x="832" y="225">No keys or funds</text>
+      <text x="338" y="165">HTTP</text>
+      <text x="550" y="261">Events</text>
+      <text x="558" y="407">Save</text>
+      <text x="744" y="127">Optional, read only</text>
+    </g>
+    <text x="60" y="426" fill="#79d6b0" font-size="14">No database. No cloud.</text>
+    <text x="60" y="451" fill="#aeb8cc" font-size="12">Traces stay on your machine.</text>
+  </g>
+</svg>

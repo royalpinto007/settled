@@ -161,22 +161,19 @@ export function simulate(raw: z.input<typeof simulationSchema>): Trace {
     server_error: 0,
   }[scenario];
   const details = [
-    "Request received by the local sandbox.",
-    "402 Payment Required returned with a fixture USDC requirement.",
-    "Fixture payment accepted by the simulated verifier.",
-    "Fixture transaction marked settled. No transaction was broadcast.",
-    "Resource delivered successfully with HTTP 200.",
+    "Request received.",
+    "HTTP 402 with a fixture USDC price.",
+    "Fixture payment accepted.",
+    "Fixture settlement confirmed.",
+    "Resource returned HTTP 200.",
   ];
   const failures: Record<string, string> = {
-    delivery_failed:
-      "HTTP 500 after fixture settlement. The resource was not delivered.",
-    verification_failed:
-      "Fixture signature rejected. Settlement was not attempted.",
+    delivery_failed: "HTTP 500 after fixture settlement.",
+    verification_failed: "Fixture signature rejected. No settlement attempted.",
     settlement_failed: "Simulated transaction rejected by the network.",
     timeout:
-      "No settlement confirmation within the simulated 5,000 ms deadline. Outcome unknown.",
-    server_error:
-      "HTTP 503 before the payment challenge. No payment was attempted.",
+      "No confirmation within 5,000 simulated milliseconds. Outcome unknown.",
+    server_error: "HTTP 503 before payment. No settlement attempted.",
   };
   let atMs = 0;
   const events: TraceEvent[] = stages.map((stage, index) => {
@@ -244,7 +241,7 @@ export function diagnose(trace: Trace): {
       tone: trace.transaction?.state === "confirmed" ? "good" : "warn",
       title: `Devnet transaction: ${trace.transaction?.state.replaceAll("_", " ") ?? "unknown"}`,
       advice:
-        "This is a chain observation only. Confirm recipient, asset, amount, authorization and resource delivery in your x402 integration separately.",
+        "Check recipient, mint, amount, authorization and delivery in your x402 integration. This result confirms chain execution only.",
     };
   const failed = trace.events.find(
     (e) => e.status === "failure" || e.status === "timeout",
@@ -254,49 +251,49 @@ export function diagnose(trace: Trace): {
       tone: "bad",
       title: "Payment settled. Delivery failed.",
       advice:
-        "Inspect the resource handler and correlate its logs with this request. Recover delivery using your purchase ID; do not create another payment for the same purchase.",
+        "Check the resource handler. Recover delivery with the same purchase ID instead of paying again.",
     };
   if (trace.outcome === "timeout")
     return {
       tone: "warn",
       title: "Settlement outcome is unknown.",
       advice:
-        "Check the existing transaction signature before retrying. A confirmation timeout does not establish that the payment failed. Avoid creating a second payment.",
+        "Check the existing signature before retrying. A timeout does not mean payment failed. Avoid paying twice.",
     };
   if (failed?.stage === "verification")
     return {
       tone: "bad",
       title: "Payment verification rejected.",
       advice:
-        "Compare the selected requirement with the payload: network, mint, recipient, amount, expiry and signature. Do not settle or deliver until verification succeeds.",
+        "Check network, mint, recipient, amount, expiry and signature. Settle only after verification passes.",
     };
   if (failed?.stage === "settlement")
     return {
       tone: "bad",
       title: "Settlement failed. No delivery attempted.",
       advice:
-        "Inspect the transaction error and payer balance. Check blockhash expiry and facilitator policy before retrying with the same purchase identifier.",
+        "Check the transaction error, balance and blockhash expiry. Keep the same purchase ID when retrying.",
     };
   if (trace.outcome === "error")
     return {
       tone: "bad",
       title: "Request failed before payment.",
       advice:
-        "Inspect server availability and the resource route. The payment challenge was never issued, so no settlement should have been attempted.",
+        "Check the API route and server logs. No payment challenge was issued.",
     };
   if (trace.outcome === "observed")
     return {
       tone: "warn",
       title: "Lifecycle evidence is incomplete.",
       advice:
-        "Capture the remaining verification, settlement and delivery outcomes before deciding whether this request succeeded.",
+        "Capture the missing stages before deciding whether the request succeeded.",
     };
   return {
     tone: "good",
     title: "Payment and delivery completed.",
     advice:
       trace.source === "simulation"
-        ? "The sandbox completed every stage. Try a delivery failure to see how a successful payment can still produce a failed request."
-        : "The captured lifecycle reports successful verification, settlement and delivery. Captured events are caller-reported evidence.",
+        ? "All five stages passed. Try a delivery failure next."
+        : "Your app reported successful verification, settlement and delivery.",
   };
 }
