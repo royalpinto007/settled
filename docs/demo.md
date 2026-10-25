@@ -27,4 +27,4 @@ Output: `~/Downloads/settled-demo.mp4` and a PNG poster. Use `--output /path/dem
 
 Export: H.264, 1920 × 1080, 30 fps, AAC stereo, fast-start MP4. Review the video before posting. Publication is not automated.
 
-[Social preview](social-preview.png): a 1200 × 630 frame for GitHub's repository social-preview setting. Upload it from repository Settings after review. It has not been set remotely because the browser session is not signed into GitHub.
+[Social preview](social-preview.png): a 1200 × 630 frame for GitHub's repository social-preview setting. Upload it from repository Settings after review.

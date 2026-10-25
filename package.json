@@ -19,7 +19,10 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "test:e2e": "playwright test",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
+    "prepack": "npm run build",
+    "package:check": "npm run build && node scripts/check-package.mjs",
+    "demo:video": "node scripts/capture-demo.mjs"
   },
   "dependencies": {
     "express": "^5.3.0",
@@ -40,5 +43,42 @@
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0"
+  },
+  "author": "Royal Pinto <royalpinto007@gmail.com>",
+  "homepage": "https://github.com/royalpinto007/settled#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/royalpinto007/settled.git"
+  },
+  "bugs": {
+    "url": "https://github.com/royalpinto007/settled/issues"
+  },
+  "keywords": [
+    "x402",
+    "solana",
+    "payments",
+    "debugger",
+    "developer-tools",
+    "local-first",
+    "http402",
+    "simulation",
+    "cli",
+    "typescript"
+  ],
+  "bin": {
+    "settled": "dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "docs/*.md",
+    "docs/*.svg",
+    "docs/screenshot.png",
+    "examples/",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

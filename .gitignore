@@ -10,3 +10,5 @@ playwright-report/
 test-results/
 .codebase-memory/
 *.log
+*.tgz
+.npmrc

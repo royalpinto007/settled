@@ -7,3 +7,5 @@
 - Read-only Solana Devnet transaction checks.
 - Styled controls and responsive dashboard.
 - Offline API, architecture and setup pages with diagrams.
+- Installable CLI and checked npm tarball; publication pending approval.
+- Reproducible 27-second working demo and product feedback tracking.
