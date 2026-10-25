@@ -4,9 +4,10 @@ import { createServer } from "node:http";
 import { once } from "node:events";
 import { checkDevnet } from "../src/adapters/devnet.js";
 
-test("Devnet adapter handles confirmed, failed, absent and incomplete transactions over HTTP", async () => {
+test("Devnet adapter opts into version 1 and handles confirmed, failed, absent and incomplete transactions over HTTP", async () => {
   const signature = "1".repeat(64);
   let result: unknown = {
+    version: 1,
     slot: 123,
     blockTime: 1750000000,
     meta: { err: null, fee: 5000 },
@@ -18,7 +19,24 @@ test("Devnet adapter handles confirmed, failed, absent and incomplete transactio
     for await (const chunk of req) body += chunk;
     received = JSON.parse(body);
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ jsonrpc: "2.0", id: 1, result }));
+    const params = received.params as [
+      string,
+      { maxSupportedTransactionVersion: number },
+    ];
+    res.end(
+      JSON.stringify(
+        params[1].maxSupportedTransactionVersion < 1
+          ? {
+              jsonrpc: "2.0",
+              id: 1,
+              error: {
+                code: -32015,
+                message: "Transaction version (1) is not supported",
+              },
+            }
+          : { jsonrpc: "2.0", id: 1, result },
+      ),
+    );
   });
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
@@ -35,7 +53,7 @@ test("Devnet adapter handles confirmed, failed, absent and incomplete transactio
       {
         commitment: "confirmed",
         encoding: "jsonParsed",
-        maxSupportedTransactionVersion: 0,
+        maxSupportedTransactionVersion: 1,
       },
     ]);
     result = {

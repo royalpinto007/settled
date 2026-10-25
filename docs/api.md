@@ -106,7 +106,7 @@ curl http://127.0.0.1:4402/api/devnet \
   -d '{"signature":"PASTE_AN_EXISTING_DEVNET_SIGNATURE"}'
 ```
 
-The fixed public endpoint calls `getTransaction` with `commitment: "confirmed"`, `encoding: "jsonParsed"`, `maxSupportedTransactionVersion: 0`. A matching result with `meta.err: null` produces `confirmed`; a transaction error produces `failed`; a null result produces `not_found`; missing metadata produces `unknown`. Responses are size-limited and checked against a schema. Unsupported transaction versions, malformed responses and RPC outages produce an error. A timeout is never interpreted as payment failure.
+The fixed public endpoint calls `getTransaction` with `commitment: "confirmed"`, `encoding: "jsonParsed"`, `maxSupportedTransactionVersion: 1`. This supports legacy, v0 and v1 transaction observations, following [Solana's versioned transaction guidance](https://solana.com/developers/cookbook/transactions/versions). A matching result with `meta.err: null` produces `confirmed`; a transaction error produces `failed`; a null result produces `not_found`; missing metadata produces `unknown`. Responses are size-limited and checked against a schema. Unsupported transaction versions, malformed responses and RPC outages produce an error. A timeout is never interpreted as payment failure.
 
 ## Errors
 
