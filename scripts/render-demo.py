@@ -55,10 +55,10 @@ for step in range(56):
         add(t, .42, note / 2, .14, 'bass')
         if step % 2:
             add(t, .7, chords[(step // 8) % 4][(step // 2) % 3] * 4, .045, 'pluck', pan=-.55)
-for cue in [.14, .86, 1.85, 7.4, 9.3, 10.1, 11.0, 19.05, 24.45]:
+for cue in [.14, .86, 1.85, 4, 4.9, 5.55, 6.9, 9.1, 10, 10.9, 13.8, 17.65, 19.05, 24.45]:
     add(cue, .04, amplitude=.08, kind='tick')
-    add(cue, .25, 880 if cue != 11 else 220, .055, 'pluck')
-for cue in [3.0, 8.2, 13.75, 17.4, 22.4]:
+    add(cue, .25, 880 if cue != 10.9 else 220, .055, 'pluck')
+for cue in [3.0, 7.75, 13.5, 17.35, 22.4]:
     add(max(0, cue - .25), .55, amplitude=.095, kind='sweep', pan=.2)
     add(cue + .16, .35, amplitude=.20, kind='kick')
 for note in [110, 164.81, 220, 261.63]:

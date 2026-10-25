@@ -1,11 +1,11 @@
 @font-face {
   font-family: Lato;
-  src: url("/font-heavy.ttf");
+  src: url("/__demo/font-heavy.ttf");
   font-weight: 800;
 }
 @font-face {
   font-family: Lato;
-  src: url("/font-regular.ttf");
+  src: url("/__demo/font-regular.ttf");
   font-weight: 400;
 }
 * {
@@ -193,82 +193,11 @@ h1 {
 h1 span {
   display: inline-block;
 }
-.screen {
-  overflow: hidden;
-  border: 1px solid #b7a3ff33;
-  border-radius: 20px;
-  background: #14171e;
-  box-shadow: 0 50px 180px #000a;
-}
-#dashboard {
-  position: absolute;
-  width: 1280px;
-  height: 826px;
-  left: 320px;
-  top: 160px;
-}
-.screen-bar {
-  height: 36px;
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  padding: 0 18px;
-  background: #20232d;
-}
-.screen-bar i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #727484;
-}
-.screen-bar span {
-  color: #a2a9b9;
-  margin-left: 430px;
-  font-size: 12px;
-}
-.screen img {
-  width: 100%;
-}
-.film {
-  position: absolute;
-  overflow: hidden;
-  border: 1px solid #b7a3ff33;
-  border-radius: 22px;
-  background: #11141b;
-  box-shadow: 0 45px 120px #0008;
-}
-.film video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-#run-film {
-  left: 520px;
-  top: 325px;
-  width: 880px;
-  height: 610px;
-}
-#run .section-title {
-  top: 220px;
-}
-.film-tag {
-  position: absolute;
-  right: 20px;
-  top: 18px;
-  font-size: 13px;
-  letter-spacing: 2px;
-  color: #8f98ad;
-}
 .caption {
   position: absolute;
   font-size: 26px;
   color: #aeb7ca;
   letter-spacing: 0.2px;
-}
-#run-caption {
-  left: 800px;
-  top: 960px;
 }
 .dot {
   display: inline-block;
@@ -280,12 +209,6 @@ h1 span {
 }
 #inspect .section-title {
   top: 220px;
-}
-#trace-film {
-  left: 670px;
-  top: 355px;
-  width: 1110px;
-  height: 560px;
 }
 .stage-label {
   position: absolute;
@@ -322,16 +245,6 @@ h1 span {
 #delivery i {
   color: #f489a7;
 }
-#failure-focus {
-  position: absolute;
-  left: 680px;
-  top: 622px;
-  width: 1090px;
-  height: 276px;
-  border: 2px solid #f489a7;
-  border-radius: 14px;
-  box-shadow: 0 0 40px #f489a710;
-}
 #diagnostic-caption {
   position: absolute;
   left: 138px;
@@ -353,12 +266,6 @@ h1 span {
   top: 360px;
   left: 125px;
   font-size: 100px;
-}
-#transaction-film {
-  left: 800px;
-  top: 270px;
-  width: 1000px;
-  height: 600px;
 }
 #transaction-caption {
   left: 130px;
@@ -383,12 +290,6 @@ h1 span {
 }
 #evidence .section-title {
   top: 220px;
-}
-#export-film {
-  left: 155px;
-  top: 340px;
-  width: 1030px;
-  height: 600px;
 }
 #file {
   position: absolute;
@@ -545,4 +446,76 @@ footer i {
   #halo {
     display: none;
   }
+}
+
+/* The app stays live inside one persistent viewport. No raster UI surfaces. */
+#product-window {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1440px;
+  height: 670px;
+  border: 1px solid #b7a3ff38;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #101218;
+  box-shadow: 0 35px 100px #0008;
+  z-index: 3;
+  transform: translate(240px, 310px);
+  transform-origin: 0 0;
+}
+.browser-bar {
+  height: 42px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #1b1e28;
+  border-bottom: 1px solid #303542;
+  font-size: 14px;
+  color: #a2a9bc;
+}
+.browser-dots {
+  display: flex;
+  gap: 7px;
+}
+.browser-dots i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: #646779;
+  border-radius: 50%;
+}
+.browser-bar b {
+  margin-left: auto;
+  color: #b7a3ff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 400;
+}
+#product-viewport {
+  position: relative;
+  width: 1440px;
+  height: 628px;
+  overflow: hidden;
+  background: #101218;
+}
+#product-camera {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 700px;
+  border: 0;
+  transform-origin: 0 0;
+  transform: scale(0.9);
+}
+#product-window ~ .scene {
+  pointer-events: none;
+}
+#run .section-title {
+  top: 210px;
+}
+#export-caption {
+  top: 880px;
 }

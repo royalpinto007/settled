@@ -3,19 +3,23 @@ import { chromium } from "@playwright/test";
 import { build } from "esbuild";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import assert from "node:assert/strict";
+import { createApp } from "../dist/app.js";
+import { JsonStore } from "../dist/adapters/store.js";
+import { simulate, scenarios } from "../dist/domain/trace.js";
+import { prepareProduct } from "./motion/product.mjs";
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
-  options: { inspect: { type: "boolean" } },
+  options: { inspect: { type: "boolean" }, verify: { type: "boolean" } },
 });
 if (positionals.length !== 2)
   throw new Error(
-    "Usage: node scripts/render-demo.mjs CAPTURE_DIRECTORY OUTPUT.mp4 [--inspect]",
+    "Usage: node scripts/render-demo.mjs CAPTURE_DIRECTORY OUTPUT.mp4 [--inspect | --verify]",
   );
 const [work, output] = positionals.map((path) => resolve(path));
 assert.match(output, /\.mp4$/i, "Output path must end in .mp4");
@@ -32,37 +36,6 @@ async function run(command, args) {
   assert.equal(code, 0, error);
 }
 await mkdir(dirname(output), { recursive: true });
-const manifest = JSON.parse(await readFile(join(work, "shots.json"), "utf8"));
-// Short GOPs make deterministic video seeking cheap. Crops contain only real UI.
-for (const shot of manifest.shots) {
-  if (shot.name === "hook") continue;
-  const { x, y, width, height } = shot.crop;
-  await run("ffmpeg", [
-    "-v",
-    "error",
-    "-y",
-    "-i",
-    shot.path,
-    "-vf",
-    `crop=${width}:${height}:${x}:${y},scale=1200:800:force_original_aspect_ratio=decrease:force_divisible_by=2`,
-    "-an",
-    "-c:v",
-    "libx264",
-    "-threads",
-    "2",
-    "-preset",
-    "fast",
-    "-crf",
-    "16",
-    "-g",
-    "15",
-    "-pix_fmt",
-    "yuv420p",
-    "-movflags",
-    "+faststart",
-    join(work, `${shot.name}.mp4`),
-  ]);
-}
 await build({
   entryPoints: [join(root, "timeline.ts")],
   bundle: true,
@@ -71,15 +44,22 @@ await build({
   target: "es2022",
 });
 const app = express();
-app.get("/motion.js", (_req, res) => res.sendFile(join(work, "motion.js")));
-app.get("/font-heavy.ttf", (_req, res) =>
+app.get("/__demo/motion.js", (_req, res) =>
+  res.sendFile(join(work, "motion.js")),
+);
+app.get("/__demo/font-heavy.ttf", (_req, res) =>
   res.sendFile("/usr/share/fonts/truetype/lato/Lato-Heavy.ttf"),
 );
-app.get("/font-regular.ttf", (_req, res) =>
+app.get("/__demo/font-regular.ttf", (_req, res) =>
   res.sendFile("/usr/share/fonts/truetype/lato/Lato-Regular.ttf"),
 );
-app.use("/assets", express.static(work, { dotfiles: "deny" }));
-app.use(express.static(root));
+app.use("/__demo", express.static(root));
+const directory = await mkdtemp(join(work, "live-data-"));
+const store = new JsonStore(directory);
+await store.open();
+for (const scenario of scenarios)
+  await store.add(simulate({ scenario, path: "/api/weather" }));
+app.use(createApp(store));
 const server = app.listen(0, "127.0.0.1");
 await once(server, "listening");
 let browser;
@@ -93,16 +73,17 @@ try {
   });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`http://127.0.0.1:${server.address().port}`);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  await page.goto(`${base}/__demo/`);
   await page.waitForFunction(
-    () => typeof globalThis.window.renderAt === "function",
+    () => typeof globalThis.window.setupMotion === "function",
   );
-  const seek = (time) =>
-    page.evaluate((t) => globalThis.window.renderAt(t), time);
+  const product = await prepareProduct(page, base, work);
+  const seek = product.seek;
   // Check seekability before export: scrubbing backwards must preserve the edit.
   const state = () =>
     page.evaluate(() =>
-      ["#flow", "#trace-film", "#inspect"].map((selector) => {
+      ["#flow", "#product-window", "#inspect"].map((selector) => {
         const css = globalThis.getComputedStyle(
           globalThis.document.querySelector(selector),
         );
@@ -124,31 +105,53 @@ try {
   ];
   for (const [index, time] of timestamps.entries()) {
     await seek(time);
-    await page.screenshot({
-      path: join(work, `inspect-${String(index).padStart(2, "0")}.jpg`),
-      type: "jpeg",
-      quality: 90,
-    });
+    if ([5.6, 11.9, 14.9, 20.8].includes(time))
+      await product.checkFraming(time);
+    if (values.verify && time === 14.9) {
+      const original = await page
+        .locator("#product-camera")
+        .evaluate((node) => {
+          const transform = node.style.transform;
+          node.style.transform = "translate(5000px,0)";
+          return transform;
+        });
+      try {
+        await assert.rejects(product.checkFraming(time), /Clipped live UI/);
+      } finally {
+        await page.locator("#product-camera").evaluate((node, transform) => {
+          node.style.transform = transform;
+        }, original);
+      }
+    }
+    if (!values.verify)
+      await page.screenshot({
+        path: join(work, `inspect-${String(index).padStart(2, "0")}.jpg`),
+        type: "jpeg",
+        quality: 90,
+      });
   }
-  await run("ffmpeg", [
-    "-v",
-    "error",
-    "-y",
-    "-framerate",
-    "1",
-    "-i",
-    join(work, "inspect-%02d.jpg"),
-    "-vf",
-    "scale=640:360,tile=3x5:padding=8:margin=8:color=0x22242e",
-    "-frames:v",
-    "1",
-    join(work, "motion-contact.jpg"),
-  ]);
+  if (!values.verify)
+    await run("ffmpeg", [
+      "-v",
+      "error",
+      "-y",
+      "-framerate",
+      "1",
+      "-i",
+      join(work, "inspect-%02d.jpg"),
+      "-vf",
+      "scale=640:360,tile=3x5:padding=8:margin=8:color=0x22242e",
+      "-frames:v",
+      "1",
+      join(work, "motion-contact.jpg"),
+    ]);
   assert.deepEqual(errors, []);
   console.log(
-    `GSAP scrub checks passed. Contact sheet: ${join(work, "motion-contact.jpg")}`,
+    values.verify
+      ? "Live UI, framing, simulation, JSON export and GSAP scrub checks passed."
+      : `Live UI, framing and GSAP scrub checks passed. Contact sheet: ${join(work, "motion-contact.jpg")}`,
   );
-  if (!values.inspect) {
+  if (!values.inspect && !values.verify) {
     await seek(0);
     const silent = join(work, "motion-silent.mp4");
     encoder = spawn(
@@ -191,6 +194,8 @@ try {
     const started = performance.now();
     for (let frame = 0; frame < fps * duration; frame++) {
       await seek(frame / fps);
+      if (frame === Math.round(11.9 * fps))
+        await page.screenshot({ path: join(work, "poster.png") });
       const jpeg = await page.screenshot({ type: "jpeg", quality: 94 });
       if (!encoder.stdin.write(jpeg)) await once(encoder.stdin, "drain");
       if (frame % (fps * 2) === 0)
@@ -203,14 +208,22 @@ try {
     assert.equal(code, 0, encoderErrors);
     assert.deepEqual(errors, []);
     await run("python3", ["scripts/render-demo.py", work, output]);
-    await seek(11.9);
-    await page.screenshot({ path: output.replace(/\.mp4$/i, ".png") });
+    await copyFile(join(work, "poster.png"), output.replace(/\.mp4$/i, ".png"));
     console.log(`Saved GSAP motion edit: ${output}`);
   }
   await writeFile(
     join(work, "motion-check.json"),
     JSON.stringify(
-      { duration, fps, scrubCheck: "passed", errors, timestamps },
+      {
+        duration,
+        fps,
+        scrubCheck: "passed",
+        framingCheck: "passed",
+        liveUI: true,
+        exportId: product.getEvidence()?.trace.id,
+        errors,
+        timestamps,
+      },
       null,
       2,
     ),
@@ -220,4 +233,5 @@ try {
   if (browser) await browser.close();
   server.closeAllConnections();
   await new Promise((done) => server.close(done));
+  await store.close();
 }

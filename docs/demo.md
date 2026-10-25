@@ -1,8 +1,8 @@
 # Demo video
 
-The 28-second demo shows a real browser session: run a delivery failure, inspect settlement and delivery, then export the matching JSON trace.
+The 28-second demo runs the actual dashboard: simulate a delivery failure, inspect settlement and delivery, then export the matching JSON trace.
 
-GSAP drives the typography, lifecycle path, camera moves, callouts and export receipt. Frames render deterministically at 60 fps, with an original stereo score and timed sound cues. The simulation shot is sped up to fit the edit. All payments are simulated.
+GSAP drives the typography, camera and callouts around one live app window. UI text renders directly from the DOM at 60 fps. The movie uses a compact inspector layout, an original stereo score and timed sound cues. All payments are simulated.
 
 ## Recreate
 
@@ -14,9 +14,11 @@ npx playwright install chromium
 node scripts/capture-demo.mjs
 ```
 
-Output: `~/Downloads/settled-demo.mp4` and a PNG poster. Use `--output /path/demo.mp4` or `--replace` when needed. Capture uses a temporary local server and temporary data, leaving your workspace traces untouched.
+Output: `~/Downloads/settled-demo.mp4` and a PNG poster. Use `--output /path/demo.mp4` or `--replace` when needed. Rendering uses a temporary local server and JSON store, leaving your workspace traces untouched.
 
-Add `--inspect` to capture a contact sheet without rendering the full video. Add `--keep-capture` to retain source footage for another edit. Re-render with `node scripts/render-demo.mjs CAPTURE_DIRECTORY OUTPUT.mp4`.
+Add `--inspect` for a contact sheet or `--keep-capture` to retain the rendered frames and export evidence. Re-render with `node scripts/render-demo.mjs WORK_DIRECTORY OUTPUT.mp4`.
+
+`npm run demo:check` verifies the live interactions, panel framing, camera scrubbing and downloaded JSON. It also checks that a shifted panel is rejected. This check runs in CI and needs Chromium, without FFmpeg or Python.
 
 | Time    | Scene                               |
 | ------- | ----------------------------------- |

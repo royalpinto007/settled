@@ -1,0 +1,105 @@
+/* Movie-only presentation: actual app nodes, handlers and API responses. */
+*,
+*::before,
+*::after,
+::picker(select) {
+  animation: none !important;
+  transition: none !important;
+}
+body[data-film="inspector"] {
+  overflow: hidden;
+  background: var(--panel);
+}
+body[data-film="inspector"] > .sidebar,
+body[data-film="inspector"] > .shell {
+  display: none;
+}
+body[data-film="inspector"] > #inspector {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  width: 780px;
+  background: var(--panel);
+  border: 0;
+  border-radius: 0;
+  padding: 24px;
+}
+body[data-film="inspector"] .inspector-heading,
+body[data-film="inspector"] .inspector-info {
+  display: none;
+}
+body[data-film="inspector"] .tabs {
+  margin: 0 -24px 18px;
+  padding: 0 24px;
+}
+body[data-film="inspector"] .tabs button {
+  font-size: 14px;
+}
+body[data-film="inspector"] .event-title {
+  font-size: 15px;
+  line-height: 23px;
+}
+body[data-film="inspector"] .event-title small {
+  font-size: 11px;
+}
+body[data-film="inspector"] .event-detail {
+  font-size: 12px;
+}
+body[data-film="inspector"] .timeline li {
+  padding-bottom: 17px;
+}
+body[data-film="inspector"] .diagnostic {
+  padding: 16px;
+}
+body[data-film="inspector"] .diagnostic h3 {
+  font-size: 14px;
+}
+body[data-film="inspector"] .diagnostic p {
+  font-size: 12px;
+}
+body[data-film="inspector"] .evidence-label {
+  font-size: 11px;
+}
+body[data-film="inspector"] .transaction-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+}
+body[data-film="inspector"] .transaction-grid dt {
+  font-size: 12px;
+}
+body[data-film="inspector"] .transaction-grid dd {
+  font-size: 13px;
+}
+body[data-film="inspector"] pre {
+  max-height: 345px;
+  font-size: 13px;
+}
+body[data-film="inspector"] .text-button {
+  font-size: 13px;
+}
+body[data-film="inspector"]
+  #trace-panel[data-highlight]
+  .timeline
+  li:last-child
+  > div {
+  background: #ef91a80a;
+  border-radius: 4px;
+  outline: 1px solid #ef91a877;
+  outline-offset: 7px;
+}
+#film-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 30px;
+  pointer-events: none;
+  z-index: 2147483647;
+  opacity: 0;
+  filter: drop-shadow(0 2px 4px #0008);
+}
+#film-cursor svg {
+  width: 24px;
+  height: 30px;
+}

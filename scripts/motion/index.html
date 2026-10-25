@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Settled? motion composition</title>
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/__demo/style.css" />
   </head>
   <body>
     <main id="stage" aria-label="Settled? product demo">
@@ -34,31 +34,30 @@
         </div>
         <div id="failure-ring"></div>
       </div>
+      <div id="product-window">
+        <div class="browser-bar">
+          <div class="browser-dots"><i></i><i></i><i></i></div>
+          <span>settled? / local session</span
+          ><b id="product-view">LIVE DASHBOARD</b>
+        </div>
+        <div id="product-viewport">
+          <iframe
+            id="product-camera"
+            name="settled-product"
+            src="/"
+            title="Live Settled? dashboard"
+          ></iframe>
+        </div>
+      </div>
       <section id="run" class="scene">
         <h1 class="section-title">
           <span>Break it.</span> <span class="purple">Safely.</span>
         </h1>
-        <div id="dashboard" class="screen">
-          <div class="screen-bar">
-            <i></i><i></i><i></i><span>127.0.0.1:4402</span>
-          </div>
-          <img src="/assets/dashboard.png" alt="Real Settled? dashboard" />
-        </div>
-        <div id="run-film" class="film">
-          <video data-shot="simulate" muted playsinline preload="auto"></video>
-          <div class="film-tag">REAL APP / SIMULATION</div>
-        </div>
-        <div id="run-caption" class="caption">
-          <span class="dot"></span>No wallet. No funds.
-        </div>
       </section>
       <section id="inspect" class="scene">
         <h1 class="section-title">
           <span>Find the</span> <span class="green">exact break.</span>
         </h1>
-        <div id="trace-film" class="film">
-          <video data-shot="timeline" muted playsinline preload="auto"></video>
-        </div>
         <div id="verified" class="stage-label">
           <b>01</b><span>VERIFIED</span><i>✓</i>
         </div>
@@ -68,7 +67,6 @@
         <div id="delivery" class="stage-label">
           <b>03</b><span>DELIVERY FAILED</span><i>×</i>
         </div>
-        <div id="failure-focus"></div>
         <div id="diagnostic-caption">
           The payment worked.<br /><strong>The response didn’t.</strong>
         </div>
@@ -78,14 +76,6 @@
         <h1>
           <span>Every stage.</span><br /><span class="purple">One trace.</span>
         </h1>
-        <div id="transaction-film" class="film">
-          <video
-            data-shot="transaction"
-            muted
-            playsinline
-            preload="auto"
-          ></video>
-        </div>
         <div id="transaction-caption" class="caption">
           Fixture or Devnet. Always labeled.
         </div>
@@ -95,9 +85,6 @@
         <h1 class="section-title">
           <span>Keep the</span> <span class="purple">evidence.</span>
         </h1>
-        <div id="export-film" class="film">
-          <video data-shot="export" muted playsinline preload="auto"></video>
-        </div>
         <div id="file">
           <div class="file-mark">{<span>↗</span>}</div>
           <b>trace.json</b><span>Versioned. Local. Yours.</span>
@@ -126,6 +113,6 @@
       </footer>
       <div id="progress"></div>
     </main>
-    <script src="/motion.js"></script>
+    <script src="/__demo/motion.js"></script>
   </body>
 </html>
