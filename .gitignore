@@ -1,0 +1,12 @@
+node_modules/
+dist/
+data/
+.env*
+!.env.example
+*.pem
+*.key
+coverage/
+playwright-report/
+test-results/
+.codebase-memory/
+*.log
