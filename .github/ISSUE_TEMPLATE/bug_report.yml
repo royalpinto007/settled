@@ -1,0 +1,21 @@
+name: Bug report
+description: Report a reproducible problem.
+labels: [bug]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include what you expected and the steps to reproduce it.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser and Node.js version.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Redacted logs or screenshots only. Never include keys, environment files or payment payloads.
