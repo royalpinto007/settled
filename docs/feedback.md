@@ -4,12 +4,13 @@
 
 Maintainer review is tracked below. No external community feedback has been collected yet.
 
-| Feedback                           | Status            | Follow-up                                             |
-| ---------------------------------- | ----------------- | ----------------------------------------------------- |
-| Dropdowns need polish              | Addressed         | Pointer and keyboard tests cover the styled controls  |
-| Architecture is hard to find       | Addressed         | Sidebar page and two visible diagrams                 |
-| README and UI copy are too long    | Addressed         | Shorter copy and separate local documentation         |
-| Need a real demo under 30 seconds  | Awaiting review   | 27-second capture with simulation and JSON export     |
-| Make the tool installable from npm | Awaiting approval | CLI and tarball prepared; publication remains on hold |
+| Feedback                           | Status            | Follow-up                                              |
+| ---------------------------------- | ----------------- | ------------------------------------------------------ |
+| Dropdowns need polish              | Addressed         | Pointer and keyboard tests cover the styled controls   |
+| Architecture is hard to find       | Addressed         | Sidebar page and two visible diagrams                  |
+| README and UI copy are too long    | Addressed         | Shorter copy and separate local documentation          |
+| Need a real demo under 30 seconds  | Awaiting review   | 28-second GSAP edit with simulation and JSON export    |
+| Demo feels like a slide deck       | Awaiting review   | Continuous lifecycle path, camera moves and timed cues |
+| Make the tool installable from npm | Awaiting approval | CLI and tarball prepared; publication remains on hold  |
 
 For new reports: reproduce the task, link related issues, choose the next action, and close only after verification. Keep one issue per problem. Record actual feedback, not inferred user quotes or invented adoption numbers.

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Settled? motion composition</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main id="stage" aria-label="Settled? product demo">
+      <div id="grid"></div>
+      <div id="halo"></div>
+      <header>
+        <strong>settled<span>?</span></strong
+        ><span>x402 / SOLANA</span>
+      </header>
+      <div id="hero">
+        <div class="eyebrow">THE PAYMENT IS ONLY HALF THE STORY</div>
+        <div class="hero-line">
+          <span id="paid">Payment settled<span class="green">.</span></span>
+        </div>
+        <div class="hero-line">
+          <span id="failed">Delivery failed<span class="pink">.</span></span>
+        </div>
+        <div id="hero-note">Now find out why.</div>
+      </div>
+      <div id="flow">
+        <div class="flow-track"></div>
+        <div id="flow-fill"></div>
+        <div class="flow-node"><b>01</b><span>REQUEST</span><i>✓</i></div>
+        <div class="flow-node"><b>02</b><span>VERIFY</span><i>✓</i></div>
+        <div class="flow-node"><b>03</b><span>SETTLE</span><i>✓</i></div>
+        <div class="flow-node broken">
+          <b>04</b><span>DELIVER</span><i>×</i>
+        </div>
+        <div id="failure-ring"></div>
+      </div>
+      <section id="run" class="scene">
+        <h1 class="section-title">
+          <span>Break it.</span> <span class="purple">Safely.</span>
+        </h1>
+        <div id="dashboard" class="screen">
+          <div class="screen-bar">
+            <i></i><i></i><i></i><span>127.0.0.1:4402</span>
+          </div>
+          <img src="/assets/dashboard.png" alt="Real Settled? dashboard" />
+        </div>
+        <div id="run-film" class="film">
+          <video data-shot="simulate" muted playsinline preload="auto"></video>
+          <div class="film-tag">REAL APP / SIMULATION</div>
+        </div>
+        <div id="run-caption" class="caption">
+          <span class="dot"></span>No wallet. No funds.
+        </div>
+      </section>
+      <section id="inspect" class="scene">
+        <h1 class="section-title">
+          <span>Find the</span> <span class="green">exact break.</span>
+        </h1>
+        <div id="trace-film" class="film">
+          <video data-shot="timeline" muted playsinline preload="auto"></video>
+        </div>
+        <div id="verified" class="stage-label">
+          <b>01</b><span>VERIFIED</span><i>✓</i>
+        </div>
+        <div id="settled" class="stage-label">
+          <b>02</b><span>SETTLED</span><i>✓</i>
+        </div>
+        <div id="delivery" class="stage-label">
+          <b>03</b><span>DELIVERY FAILED</span><i>×</i>
+        </div>
+        <div id="failure-focus"></div>
+        <div id="diagnostic-caption">
+          The payment worked.<br /><strong>The response didn’t.</strong>
+        </div>
+      </section>
+      <section id="transaction" class="scene">
+        <div class="eyebrow">FOLLOW THE EVIDENCE</div>
+        <h1>
+          <span>Every stage.</span><br /><span class="purple">One trace.</span>
+        </h1>
+        <div id="transaction-film" class="film">
+          <video
+            data-shot="transaction"
+            muted
+            playsinline
+            preload="auto"
+          ></video>
+        </div>
+        <div id="transaction-caption" class="caption">
+          Fixture or Devnet. Always labeled.
+        </div>
+        <div id="trace-link"><span></span><b>TRANSACTION DETAILS</b></div>
+      </section>
+      <section id="evidence" class="scene">
+        <h1 class="section-title">
+          <span>Keep the</span> <span class="purple">evidence.</span>
+        </h1>
+        <div id="export-film" class="film">
+          <video data-shot="export" muted playsinline preload="auto"></video>
+        </div>
+        <div id="file">
+          <div class="file-mark">{<span>↗</span>}</div>
+          <b>trace.json</b><span>Versioned. Local. Yours.</span>
+          <div class="file-line"></div>
+          <code></code>
+          <div class="saved"><i>✓</i> EXPORT VERIFIED</div>
+        </div>
+        <div id="export-caption" class="caption">
+          The real request. Ready to share.
+        </div>
+      </section>
+      <section id="outro" class="scene">
+        <div id="logo">settled<span>?</span></div>
+        <div id="outro-line">Debug the payment. Ship the response.</div>
+        <div id="features">
+          <span>FREE</span><span>OPEN SOURCE</span><span>LOCAL FIRST</span>
+        </div>
+        <div id="repo">
+          <span>github.com/royalpinto007/settled</span><b>↗</b>
+        </div>
+      </section>
+      <div id="wipe"></div>
+      <footer>
+        <span><i></i> SIMULATED PAYMENTS / REAL DEBUGGING</span
+        ><span id="chapter">THE FAILURE</span><span>NO FUNDS MOVED</span>
+      </footer>
+      <div id="progress"></div>
+    </main>
+    <script src="/motion.js"></script>
+  </body>
+</html>

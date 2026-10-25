@@ -1,6 +1,5 @@
-"""Edit real browser footage into a 27-second, captioned launch demo."""
+"""Score and mux the frame-rendered GSAP composition. No stock samples."""
 import array
-import json
 import math
 import random
 import subprocess
@@ -10,148 +9,77 @@ from pathlib import Path
 
 WORK = Path(sys.argv[1])
 OUTPUT = Path(sys.argv[2])
-FONT = Path('/usr/share/fonts/truetype/lato/Lato-Heavy.ttf')
-REGULAR = Path('/usr/share/fonts/truetype/lato/Lato-Regular.ttf')
-if not FONT.exists() or not REGULAR.exists():
-    raise SystemExit('Install Lato fonts before rendering the demo.')
-DURATIONS = [3.3, 5.1, 5.4, 3.5, 5.2, 5.3]
-TRANSITION = 0.16
-DURATION = sum(DURATIONS) - TRANSITION * 5
-
-
-def run(arguments):
-    subprocess.run(arguments, check=True)
-
-
-def text_filter(text, name, x, y, size, color='edf0f7', regular=False):
-    if '\n' in text:
-        return ','.join(text_filter(line, f'{name}-{index}', x, f'{y}+{index * (size + 24)}', size, color, regular)
-                        for index, line in enumerate(text.splitlines()))
-    path = WORK / f'{name}.txt'
-    path.write_text(text)
-    font = REGULAR if regular else FONT
-    return f"drawtext=fontfile={font}:textfile={path}:expansion=none:fontsize={size}:fontcolor=0x{color}:x={x}:y={y}:line_spacing=18"
-
-
-def encode(arguments, target):
-    run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-filter_threads', '1', *arguments,
-         '-an', '-c:v', 'libx264', '-threads', '2', '-preset', 'medium', '-crf', '18',
-         '-pix_fmt', 'yuv420p', '-r', '30', str(target)])
-
-
-shots = json.loads((WORK / 'shots.json').read_text())['shots']
-copy = [
-    ('Paid.\nNot delivered.', 'The payment worked.\nThe request still failed.', 'ef91a8'),
-    ('Break it.\nSafely.', 'Choose a failure.\nNo wallet. No funds.', 'b7a3ff'),
-    ('Find the\nexact break.', 'Verified. Settled.\nDelivery failed.', '79d6b0'),
-    ('Inspect the\ntransaction.', 'Fixture or Devnet.\nAlways labeled.', 'b7a3ff'),
-    ('Keep the\nevidence.', 'Export the real trace\nas versioned JSON.', 'b7a3ff'),
-]
-scenes = []
-for i, (shot, (heading, subtitle, accent)) in enumerate(zip(shots, copy)):
-    crop = shot['crop']
-    w, h, x, y = [crop[key] for key in ('width', 'height', 'x', 'y')]
-    # A slow push-in adds motion without altering the recorded app state.
-    filters = [
-        f'crop={w}:{h}:{x}:{y}',
-        'scale=1080:860:force_original_aspect_ratio=decrease',
-        'pad=1080:860:(ow-iw)/2:(oh-ih)/2:color=0x101218',
-        "zoompan=z='min(1+on*0.0001,1.025)':d=1:s=1080x860:fps=30",
-        'pad=1920:1080:790:150:color=0x101218',
-        'setsar=1',
-        text_filter('settled?', f'brand-{i}', 72, 48, 36, 'b7a3ff'),
-        text_filter('x402 / Solana', f'category-{i}', 1600, 58, 24, 'aeb8cc', True),
-        text_filter(heading, f'heading-{i}', 72, 330, 92, accent),
-        text_filter(subtitle, f'subtitle-{i}', 76, 620, 31, 'b8c2d5', True),
-        text_filter('Simulated payments. Real debugging.', f'footnote-{i}', 76, 1000, 22, '929cb0', True),
-        f'tpad=stop_mode=clone:stop_duration=1,trim=duration={DURATIONS[i]},setpts=PTS-STARTPTS',
-    ]
-    target = WORK / f'scene-{i}.mp4'
-    encode(['-i', shot['path'], '-vf', ','.join(filters)], target)
-    scenes.append(target)
-    print(f'Edited scene {i + 1}/6', flush=True)
-
-end_filters = [
-    'drawbox=x=96:y=160:w=1728:h=2:color=0x444057:t=fill',
-    text_filter('settled?', 'end-name', '(w-text_w)/2', 290, 164, 'b7a3ff'),
-    text_filter('Local-first x402 debugging for Solana.', 'end-line', '(w-text_w)/2', 505, 46),
-    text_filter('Free. Open source. No funds needed.', 'end-free', '(w-text_w)/2', 590, 35, 'b8c2d5', True),
-    'drawbox=x=420:y=725:w=1080:h=100:color=0x29243c:t=fill',
-    text_filter('github.com/royalpinto007/settled', 'end-url', '(w-text_w)/2', 756, 38),
-    'fade=t=in:d=0.2,fade=t=out:st=4.9:d=0.4',
-]
-last = WORK / 'scene-5.mp4'
-encode(['-f', 'lavfi', '-i', f'color=c=0x101218:s=1920x1080:r=30:d={DURATIONS[-1]}', '-vf', ','.join(end_filters)], last)
-scenes.append(last)
-print('Edited scene 6/6', flush=True)
-
-# Original, deterministic synth bed. No stock music, samples or licensing dependency.
-rate = 48000
-samples = array.array('f', [0.0]) * int(DURATION * rate)
+DURATION = 28
+RATE = 48000
 rng = random.Random(402)
+left = array.array('f', [0.0]) * (DURATION * RATE)
+right = array.array('f', [0.0]) * (DURATION * RATE)
 
 
-def add_tone(start, length, frequency, amplitude, kind='pluck'):
-    begin = int(start * rate)
-    count = min(int(length * rate), len(samples) - begin)
+def add(start, length, frequency=110, amplitude=.1, kind='pluck', pan=0):
+    begin = int(start * RATE)
+    count = min(int(length * RATE), len(left) - begin)
     phase = 0.0
     for n in range(max(0, count)):
-        t = n / rate
+        t = n / RATE
         if kind == 'kick':
-            frequency_now = 46 + 115 * math.exp(-t * 27)
-            phase += 2 * math.pi * frequency_now / rate
-            value = math.sin(phase) * math.exp(-t * 18)
-        elif kind == 'hat':
-            value = (rng.random() * 2 - 1) * math.exp(-t * 90)
+            phase += 2 * math.pi * (45 + 100 * math.exp(-t * 32)) / RATE
+            value = math.sin(phase) * math.exp(-t * 17)
+        elif kind == 'tick':
+            value = (rng.random() * 2 - 1) * math.exp(-t * 130)
+        elif kind == 'sweep':
+            envelope = math.sin(math.pi * t / length) ** 2
+            value = ((rng.random() * 2 - 1) * .45 + math.sin(2 * math.pi * (170 * t + 800 * t * t)) * .12) * envelope
+        elif kind == 'pad':
+            envelope = min(1, t / .3, (length - t) / .4)
+            value = (math.sin(2 * math.pi * frequency * t) + .25 * math.sin(2 * math.pi * frequency * 1.003 * t)) * envelope
         else:
-            envelope = min(1, t / 0.007) * math.exp(-t * (7 if kind == 'pluck' else 3))
-            value = (math.sin(2 * math.pi * frequency * t) + .18 * math.sin(4 * math.pi * frequency * t)) * envelope
-        samples[begin + n] += value * amplitude
+            envelope = min(1, t / .004) * math.exp(-t * (8 if kind == 'pluck' else 4))
+            value = (math.sin(2 * math.pi * frequency * t) + .16 * math.sin(4 * math.pi * frequency * t)) * envelope
+        gain = amplitude * value
+        left[begin + n] += gain * (1 - max(0, pan) * .5)
+        right[begin + n] += gain * (1 + min(0, pan) * .5)
 
 
-beat = 60 / 112
-notes = [146.83, 174.61, 220.0, 261.63, 220.0, 174.61, 164.81, 220.0]
-for step in range(int(DURATION / (beat / 2))):
-    t = step * beat / 2
-    add_tone(t, .22, 0, .045 if step % 2 else .065, 'hat')
-    add_tone(t, .5, notes[step % len(notes)] * 2, .07, 'pluck')
-    if step % 2 == 0:
-        add_tone(t, .35, 0, .24, 'kick')
-    if step % 4 == 0:
-        add_tone(t, .8, notes[(step // 4) % 4], .14, 'bass')
-cut = 0
-for duration in DURATIONS[:-1]:
-    cut += duration - TRANSITION
-    add_tone(cut, .18, 880, .09)
-    add_tone(cut + .05, .16, 1320, .045)
+# Restrained opening, then a bass-led 120 BPM pulse. Editorial hits follow GSAP cues.
+chords = [(110, 130.81, 164.81), (87.31, 110, 130.81), (130.81, 164.81, 196), (98, 123.47, 146.83)]
+for bar in range(7):
+    for index, note in enumerate(chords[bar % 4]):
+        add(bar * 4, 4.1, note * 2, .022, 'pad', (index - 1) * .7)
+for step in range(56):
+    t = step * .5
+    if t >= 3.9 and t < 25.9:
+        add(t, .35, amplitude=.19, kind='kick')
+        add(t + .25, .04, amplitude=.022, kind='tick', pan=.65)
+        note = chords[(step // 8) % 4][0]
+        add(t, .42, note / 2, .14, 'bass')
+        if step % 2:
+            add(t, .7, chords[(step // 8) % 4][(step // 2) % 3] * 4, .045, 'pluck', pan=-.55)
+for cue in [.14, .86, 1.85, 7.4, 9.3, 10.1, 11.0, 19.05, 24.45]:
+    add(cue, .04, amplitude=.08, kind='tick')
+    add(cue, .25, 880 if cue != 11 else 220, .055, 'pluck')
+for cue in [3.0, 8.2, 13.75, 17.4, 22.4]:
+    add(max(0, cue - .25), .55, amplitude=.095, kind='sweep', pan=.2)
+    add(cue + .16, .35, amplitude=.20, kind='kick')
+for note in [110, 164.81, 220, 261.63]:
+    add(22.9, 3.7, note, .055, 'pad')
+
 pcm = array.array('h')
-for index, value in enumerate(samples):
-    t = index / rate
-    fade = min(1, t / .15, max(0, (DURATION - t) / .75))
-    pcm.append(int(math.tanh(value * 1.2) * .8 * fade * 32767))
-audio = WORK / 'original-score.wav'
+for index, (a, b) in enumerate(zip(left, right)):
+    t = index / RATE
+    fade = min(1, t / .08, max(0, (DURATION - t) / .7))
+    for value in (a, b):
+        pcm.append(int(math.tanh(value) * .88 * fade * 32767))
+audio = WORK / 'motion-score.wav'
 with wave.open(str(audio), 'wb') as wav:
-    wav.setnchannels(1)
+    wav.setnchannels(2)
     wav.setsampwidth(2)
-    wav.setframerate(rate)
+    wav.setframerate(RATE)
     wav.writeframes(pcm.tobytes())
-
-arguments = ['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-filter_complex_threads', '1']
-for scene in scenes:
-    arguments += ['-i', str(scene)]
-arguments += ['-i', str(audio)]
-transitions = []
-previous = '0:v'
-offset = 0
-for i in range(1, len(scenes)):
-    offset += DURATIONS[i - 1] - TRANSITION
-    name = f'cut{i}'
-    transitions.append(f'[{previous}][{i}:v]xfade=transition=fade:duration={TRANSITION}:offset={offset}[{name}]')
-    previous = name
-arguments += ['-filter_complex', ';'.join(transitions), '-map', f'[{previous}]', '-map', '6:a',
-              '-t', str(DURATION), '-c:v', 'libx264', '-threads', '2', '-preset', 'medium', '-crf', '18',
-              '-pix_fmt', 'yuv420p', '-af', 'volume=8dB', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-ac', '2',
-              '-movflags', '+faststart', str(OUTPUT)]
-run(arguments)
-run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-ss', '1.6', '-i', str(OUTPUT), '-frames:v', '1', str(OUTPUT.with_suffix('.png'))])
-print(f'Encoded {DURATION:.2f}s at 1920x1080 with original AAC sound.', flush=True)
+subprocess.run([
+    'ffmpeg', '-v', 'error', '-y', '-i', str(WORK / 'motion-silent.mp4'), '-i', str(audio),
+    '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'loudnorm=I=-17:TP=-1.5:LRA=7',
+    '-c:a', 'aac', '-b:a', '192k', '-ar', str(RATE), '-ac', '2', '-t', str(DURATION),
+    '-movflags', '+faststart', str(OUTPUT)
+], check=True)
+print(f'Muxed {DURATION}s GSAP edit with original stereo score.', flush=True)

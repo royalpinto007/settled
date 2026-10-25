@@ -29,6 +29,7 @@ if (!process.argv.includes("--replace")) {
 }
 await mkdir(dirname(output), { recursive: true });
 const work = await mkdtemp(join(tmpdir(), "settled-video-"));
+console.log(`Capture workspace: ${work}`);
 const server = spawn(process.execPath, ["dist/server.js", "--demo"], {
   env: { ...process.env, PORT: "4415", DATA_DIR: join(work, "data") },
   stdio: ["ignore", "ignore", "pipe"],
@@ -65,6 +66,7 @@ try {
   await page
     .getByRole("heading", { name: "Payment settled. Delivery failed." })
     .waitFor();
+  await page.screenshot({ path: join(work, "dashboard.png") });
   await page.screencast.showActions({
     cursor: "pointer",
     duration: 450,
@@ -170,6 +172,7 @@ try {
         .getByRole("button", { name: "Run simulation", exact: true })
         .click();
       created = await (await response).json();
+      await delay(550);
     },
     () => formBox,
   );
@@ -233,6 +236,7 @@ try {
   );
   if (exported.trace.id !== created.id)
     throw new Error("Export does not match the recorded request.");
+  await writeFile(join(work, "export.json"), JSON.stringify(exported, null, 2));
   if (errors.length) throw new Error(errors.join("\n"));
   await writeFile(
     join(work, "shots.json"),
@@ -249,12 +253,25 @@ try {
   await context.close();
   await browser.close();
   browser = undefined;
-  const render = spawn("python3", ["scripts/render-demo.py", work, output], {
-    stdio: "inherit",
-  });
+  const render = spawn(
+    process.execPath,
+    [
+      "scripts/render-demo.mjs",
+      work,
+      output,
+      ...(process.argv.includes("--inspect") ? ["--inspect"] : []),
+    ],
+    {
+      stdio: "inherit",
+    },
+  );
   const [code] = await once(render, "exit");
   if (code !== 0) throw new Error(`Video renderer exited with ${code}`);
-  console.log(`Saved ${output}`);
+  console.log(
+    process.argv.includes("--inspect")
+      ? "Inspection frames ready."
+      : `Saved ${output}`,
+  );
 } finally {
   if (browser) await browser.close();
   if (server.exitCode === null) {
@@ -262,5 +279,10 @@ try {
     server.kill("SIGTERM");
     await stopped;
   }
-  await rm(work, { recursive: true, force: true });
+  if (
+    process.argv.includes("--keep-capture") ||
+    process.argv.includes("--inspect")
+  )
+    console.log(`Retained ${work}`);
+  else await rm(work, { recursive: true, force: true });
 }
