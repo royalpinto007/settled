@@ -2,10 +2,18 @@
 
 **A free, local-first x402 payment debugger for Solana. Find out whether a payment settled and why delivery failed.**
 
-![Settled? request explorer showing a paid request with failed delivery](docs/screenshot.png)
+![Settled? request explorer showing a paid request with failed delivery](https://raw.githubusercontent.com/royalpinto007/settled/main/docs/screenshot.png)
 
 [![CI](https://github.com/royalpinto007/settled/actions/workflows/ci.yml/badge.svg)](https://github.com/royalpinto007/settled/actions/workflows/ci.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-b7a3ff)](LICENSE)
+
+## Run with npm
+
+Requires Node.js 22.18+.
+
+```sh
+npx settled-debugger --demo
+```
 
 ## Run
 
@@ -30,7 +38,7 @@ Data stays in local JSON files. No database, account, telemetry or paid API. Dev
 
 ## How it works
 
-![Settled? system architecture](docs/architecture.svg)
+![Settled? system architecture](https://raw.githubusercontent.com/royalpinto007/settled/main/docs/architecture.svg)
 
 **[Architecture and payment flow](docs/architecture.md)** · **[API guide](docs/api.md)** · **[Local setup](docs/local-setup.md)**
 
@@ -44,7 +52,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MIT](LICENSE). Not published to npm.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MIT](LICENSE). [Available on npm](https://www.npmjs.com/package/settled-debugger).
 
 ## Feedback
 
