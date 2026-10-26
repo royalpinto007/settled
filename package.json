@@ -1,7 +1,6 @@
 {
   "name": "settled-debugger",
   "version": "0.1.0",
-  "private": true,
   "description": "A local-first x402 payment debugger for Solana.",
   "type": "module",
   "license": "MIT",
@@ -44,7 +43,7 @@
     "typescript-eslint": "^8.72.0"
   },
   "author": "Royal Pinto <royalpinto007@gmail.com>",
-  "homepage": "https://github.com/royalpinto007/settled#readme",
+  "homepage": "https://www.npmjs.com/package/settled-debugger",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/royalpinto007/settled.git"
