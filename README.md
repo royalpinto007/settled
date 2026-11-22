@@ -2,7 +2,12 @@
 
 **A free, local-first x402 payment debugger for Solana. Find out whether a payment settled and why delivery failed.**
 
-![Settled? request explorer showing a paid request with failed delivery](https://raw.githubusercontent.com/royalpinto007/settled/main/docs/screenshot.png)
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/royalpinto007/settled/main/docs/screenshot.png">
+  <img src="https://raw.githubusercontent.com/royalpinto007/settled/main/docs/demo-preview.webp" alt="Tracing a settled payment to a failed delivery">
+</picture>
+
+[Download the 28-second demo (MP4)](https://github.com/royalpinto007/settled/releases/download/project-demo/settled-demo.mp4)
 
 [![CI](https://github.com/royalpinto007/settled/actions/workflows/ci.yml/badge.svg)](https://github.com/royalpinto007/settled/actions/workflows/ci.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-b7a3ff)](LICENSE)
